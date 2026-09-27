@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎵 Petualangan Alat Musik Melodis – Kelas 2</title>
+<style>
+body{margin:0;padding:18px;background:
+radial-gradient(circle at 8% 12%,rgba(255,216,90,.35) 0 55px,transparent 56px),
+radial-gradient(circle at 92% 18%,rgba(78,174,114,.22) 0 70px,transparent 71px),
+radial-gradient(circle at 18% 88%,rgba(67,134,216,.20) 0 85px,transparent 86px),
+linear-gradient(135deg,#dff4ff 0%,#eaf9ef 48%,#e8f1ff 100%);
+font-family:Arial;color:#24384d;min-height:100vh}.app{max-width:900px;margin:auto;background:rgba(255,255,255,.94);border-radius:22px;overflow:hidden;box-shadow:0 10px 35px #0002}
+header{background:linear-gradient(90deg,#4386d8,#4eae72);color:#fff;padding:18px;text-align:center;font-size:25px;font-weight:900}.sub{font-size:17px;font-weight:normal}
+.bar{height:8px;background:#ddd}.fill{height:100%;background:#ffd85a;width:0}main{padding:25px}.screen{display:none}.active{display:block}.center{text-align:center}
+h1{font-size:38px}.icons{font-size:55px;margin:20px}button{border:0;border-radius:14px;padding:14px 20px;font-size:17px;font-weight:900;cursor:pointer}
+.start{background:#4eae72;color:#fff}.sound{background:#4386d8;color:#fff;margin:15px}.top{display:flex;justify-content:space-between;font-weight:900}.ear{font-size:110px;text-align:center;margin:25px}
+.q{text-align:center;font-size:24px;font-weight:900;margin:20px}.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.opt{background:#f3f7fa;border:3px solid #dce6ee;min-height:70px}
+.correct{background:#bcebc8!important}.wrong{background:#ffd0d0!important}.feedback{text-align:center;min-height:35px;font-size:19px;font-weight:900}
+.next{display:block;margin:12px auto;background:#ffd85a}.hide{display:none}audio{width:100%;margin:5px 0 12px}.note{background:#f3f8fb;padding:15px;border-radius:14px;line-height:1.6;margin-top:20px}
+@media(max-width:600px){.options{grid-template-columns:1fr}h1{font-size:30px}.icons{font-size:42px}}
+.music-bg{position:fixed;inset:0;pointer-events:none;z-index:0;color:rgba(67,134,216,.12);
+font-size:48px;line-height:2.2;text-align:justify;padding:20px;overflow:hidden}
+.app{position:relative;z-index:1}
+</style></head><body><div class="app">
+<header>🎵 Petualangan Alat Musik Melodis<div class="sub">Kelas 2 SD</div></header><div class="bar"><div id="fill" class="fill"></div></div>
+<div class="music-bg" aria-hidden="true">♪　♫　　　　　♪　　　♬<br>
+　　　♩　　　　　♪　　♫　　　　♩</div>
+<main>
+<section id="home" class="screen active center"><div class="icons">🎹 🎸 🎻 🪈 🪗</div><h1>Petualangan Alat Musik Melodis</h1>
+<p>Kenali alat musik melodis melalui <b>suara alat musik asli</b>.</p><button class="start" onclick="mulai()">▶ MULAI BERMAIN</button>
+<div class="note">🔊 Suara angklung pada versi ini diganti dengan <b>sampel rekaman angklung satu nada</b>, bukan musik gamelan. 🌐 Internet harus aktif.</div></section>
+
+<section id="game" class="screen"><div class="top"><span id="nomor"></span><span id="timer"></span></div>
+<div class="ear">👂</div><div class="center"><button class="sound" onclick="dengar()">🔊 DENGARKAN SUARA</button></div>
+<audio id="audio" controls preload="none"></audio><div id="status" class="center"></div>
+<div id="soal" class="q"></div><div class="center"><b>🎯 Pilih jawabanmu:</b></div><div id="pilihan" class="options"></div>
+<div id="feedback" class="feedback"></div><button id="next" class="next hide" onclick="lanjut()">➡️ LANJUT</button></section>
+
+<section id="hasil" class="screen active center" style="display:none"><h1>🏆 Selesai!</h1><div id="bintang" style="font-size:42px"></div><h2 id="nilai"></h2><p id="ringkasan"></p><button class="start" onclick="mulai()">🔄 MAIN LAGI</button></section>
+</main></div>
+<script>
+const AUDIO={'Pianika': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Melodica_rakesofkildare.ogg', 'Piano': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Piano.ogg', 'Gitar': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/AcousticGuitarSample.ogg', 'Biola': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Violin_sounds_and_techniques.ogg', 'Angklung': 'https://freesound.org/people/Parking%20Sun/sounds/74283/', 'Suling': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Flute.ogg'};
+const alat=[{nama:"Pianika",cara:"Ditiup sambil menekan tuts"},{nama:"Piano",cara:"Ditekan"},{nama:"Gitar",cara:"Dipetik"},{nama:"Biola",cara:"Digesek"},{nama:"Angklung",cara:"Digoyangkan"},{nama:"Suling",cara:"Ditiup"}];
+let soal=[],pos=0,benar=0,skor=0,sudah=false,timer;
+function acak(a){return [...a].sort(()=>Math.random()-.5)}
+function tampil(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function mulai(){skor=0;benar=0;pos=0;soal=[
+{j:0,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:2,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:5,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:3,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:1,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:4,k:"suara",t:"Dengarkan baik-baik. Alat musik apakah yang kamu dengar?"},
+{j:2,k:"cara",t:"Bagaimana cara memainkan gitar?"},{j:5,k:"cara",t:"Bagaimana cara memainkan suling?"},
+{j:1,k:"jenis",t:"Piano termasuk alat musik ..."},{j:4,k:"jenis",t:"Angklung termasuk alat musik ..."}];tampil("game");render()}
+function render(){clearInterval(timer);sudah=false;let s=soal[pos];document.getElementById("nomor").textContent="Soal "+(pos+1)+" / "+soal.length;document.getElementById("timer").textContent="⏱️ 20";document.getElementById("fill").style.width=(pos/soal.length*100)+"%";document.getElementById("soal").textContent=s.t;document.getElementById("feedback").textContent="";document.getElementById("status").textContent="";document.getElementById("next").classList.add("hide");let a=document.getElementById("audio");a.pause();a.removeAttribute("src");a.load();let p;if(s.k==="cara"){p=acak([alat[s.j].cara,"Ditiup","Dipukul","Dipetik"]).slice(0,3);if(!p.includes(alat[s.j].cara))p[0]=alat[s.j].cara}else if(s.k==="jenis")p=["Melodis","Bukan melodis"];else p=[s.j,...acak([0,1,2,3,4,5].filter(x=>x!==s.j)).slice(0,3)];let box=document.getElementById("pilihan");box.innerHTML="";p.forEach(x=>{let b=document.createElement("button");b.className="opt";b.textContent=typeof x==="number"?alat[x].nama:x;b.onclick=()=>jawab(x,b);box.appendChild(b)});let w=20;timer=setInterval(()=>{w--;document.getElementById("timer").textContent="⏱️ "+w;if(w<=0){clearInterval(timer);document.getElementById("feedback").textContent="⏰ Waktu habis.";document.getElementById("next").classList.remove("hide")}},1000)}
+function dengar(){sudah=true;let n=alat[soal[pos].j].nama;let a=document.getElementById("audio");a.src=AUDIO[n];a.load();a.play().then(()=>document.getElementById("status").textContent="🔊 Rekaman asli "+n+" sedang diputar.").catch(()=>document.getElementById("status").textContent="Tekan ▶ pada pemutar audio.");}
+function jawab(x,b){let s=soal[pos],ok=s.k==="jenis"?x==="Melodis":s.k==="cara"?x===alat[s.j].cara:x===s.j;if(ok){clearInterval(timer);benar++;let p=sudah?10:15;skor+=p;b.classList.add("correct");document.getElementById("feedback").textContent="🎉 Benar! +"+p+" poin";document.querySelectorAll(".opt").forEach(z=>z.disabled=true);document.getElementById("next").classList.remove("hide")}else{b.classList.add("wrong");document.getElementById("feedback").textContent="😊 Belum tepat. Coba lagi!";setTimeout(()=>b.classList.remove("wrong"),400)}}
+function lanjut(){pos++;pos>=soal.length?hasil():render()}function hasil(){clearInterval(timer);tampil("hasil");document.getElementById("fill").style.width="100%";document.getElementById("nilai").textContent=skor+" poin";document.getElementById("bintang").textContent="⭐".repeat(Math.max(1,Math.min(5,Math.ceil(skor/30))));document.getElementById("ringkasan").textContent="Benar "+benar+" dari "+soal.length+" soal."}
+</script></body></html>
